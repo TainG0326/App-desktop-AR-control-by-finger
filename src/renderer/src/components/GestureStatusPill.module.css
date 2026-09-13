@@ -1,0 +1,71 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  background: rgba(10, 16, 30, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  color: var(--color-text-secondary);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.idle .dot {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.hover {
+  border-color: rgba(106, 169, 255, 0.3);
+  color: var(--color-text-primary);
+}
+.hover .dot {
+  background: var(--color-accent);
+  box-shadow: 0 0 10px rgba(106, 169, 255, 0.6);
+}
+
+.dwell {
+  border-color: rgba(255, 182, 106, 0.5);
+  color: #ffe6c4;
+}
+.dwell .dot {
+  background: #ffb66a;
+  box-shadow: 0 0 12px rgba(255, 182, 106, 0.85);
+  animation: dwellPulse 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes dwellPulse {
+  from {
+    transform: scale(0.85);
+  }
+  to {
+    transform: scale(1.15);
+  }
+}
+
+.active {
+  border-color: rgba(255, 215, 106, 0.45);
+  color: #fff5d8;
+}
+.active .dot {
+  background: #ffd76a;
+  box-shadow: 0 0 12px rgba(255, 215, 106, 0.8);
+}
+
+.lost {
+  border-color: rgba(240, 128, 128, 0.3);
+  color: #ffd0d0;
+}
+.lost .dot {
+  background: var(--color-danger);
+  box-shadow: 0 0 10px rgba(240, 128, 128, 0.6);
+}

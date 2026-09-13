@@ -1,0 +1,35 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 36px 28px;
+}
+
+.glyph {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: radial-gradient(circle at 30% 30%, rgba(106, 169, 255, 0.4), rgba(75, 139, 255, 0.1));
+  border: 1px solid rgba(106, 169, 255, 0.25);
+  box-shadow: 0 0 24px rgba(106, 169, 255, 0.2);
+  margin-bottom: 18px;
+}
+
+.title {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.description {
+  margin: 0 0 18px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  max-width: 360px;
+  line-height: 1.55;
+}
+
+.action {
+  margin-top: 4px;
+}

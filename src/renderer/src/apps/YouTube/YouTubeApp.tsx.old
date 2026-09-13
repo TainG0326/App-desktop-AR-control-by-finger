@@ -1,0 +1,109 @@
+import { useState } from 'react';
+import { GlassPanel } from '@renderer/components/GlassPanel.js';
+import { GlassButton } from '@renderer/components/GlassButton.js';
+import { EmptyState } from '@renderer/components/EmptyState.js';
+import { parseYouTubeUrl, buildEmbedUrl } from './youtubeUrl.js';
+import styles from './YouTubeApp.module.css';
+
+export function YouTubeApp({ windowId: _windowId }: { windowId: string }): JSX.Element {
+  const [url, setUrl] = useState('');
+  const [embed, setEmbed] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const onLoad = (): void => {
+    setError(null);
+    const parsed = parseYouTubeUrl(url);
+    if (!parsed) {
+      setError('Invalid YouTube URL. Try a youtube.com/watch?v=… or youtu.be/… link.');
+      setEmbed(null);
+      return;
+    }
+    setEmbed(buildEmbedUrl(parsed));
+  };
+
+  const onClear = (): void => {
+    setEmbed(null);
+    setUrl('');
+    setError(null);
+  };
+
+  const onOpenExternal = async (): Promise<void> => {
+    if (!url) return;
+    const parsed = parseYouTubeUrl(url);
+    if (!parsed) return;
+    const watchUrl = `https://www.youtube.com/watch?v=${parsed.videoId}${
+      parsed.startSeconds ? `&t=${parsed.startSeconds}s` : ''
+    }`;
+    await window.api?.shell.openExternal(watchUrl);
+  };
+
+  if (embed) {
+    return (
+      <div className={styles.shell}>
+        <header className={styles.header}>
+          <GlassButton size="sm" variant="ghost" onClick={onClear}>
+            ← Back
+          </GlassButton>
+          <div className={styles.urlDisplay}>{url}</div>
+          <GlassButton size="sm" variant="ghost" onClick={() => void onOpenExternal()}>
+            Open externally
+          </GlassButton>
+        </header>
+        <GlassPanel padding="none" className={styles.frameWrap} elevation={0}>
+          <iframe
+            className={styles.iframe}
+            src={embed}
+            title="YouTube video"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            referrerPolicy="strict-origin-when-cross-origin"
+          />
+        </GlassPanel>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.shell}>
+        <EmptyState
+          title="Couldn't load that video"
+          description={error}
+          action={
+            <div className={styles.errorActions}>
+              <GlassButton onClick={() => setError(null)}>Try another URL</GlassButton>
+              <GlassButton variant="ghost" onClick={() => void onOpenExternal()}>
+                Open in browser instead
+              </GlassButton>
+            </div>
+          }
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.shell}>
+      <header className={styles.header}>
+        <h3 className={styles.title}>YouTube</h3>
+        <p className={styles.subtitle}>Paste a YouTube URL or 11-character video ID.</p>
+      </header>
+      <GlassPanel padding="md" elevation={0} className={styles.form}>
+        <input
+          className={styles.input}
+          placeholder="https://www.youtube.com/watch?v=…"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') onLoad();
+          }}
+        />
+        <div className={styles.formActions}>
+          <GlassButton variant="primary" onClick={onLoad} disabled={!url.trim()}>
+            Load video
+          </GlassButton>
+        </div>
+      </GlassPanel>
+    </div>
+  );
+}

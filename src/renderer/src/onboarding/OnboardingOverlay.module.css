@@ -1,0 +1,87 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+}
+
+.glyph {
+  font-size: 56px;
+  color: var(--color-text-primary);
+  text-shadow: 0 0 24px rgba(106, 169, 255, 0.6);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.description {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  max-width: 420px;
+}
+
+.gate {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.04em;
+}
+
+.gateLabel code {
+  color: var(--color-accent);
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(106, 169, 255, 0.1);
+  border: 1px solid rgba(106, 169, 255, 0.2);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.progress {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: background var(--duration-fast) var(--ease-out-soft);
+}
+
+.dotDone {
+  background: var(--color-success);
+  border-color: rgba(108, 210, 142, 0.6);
+}
+
+.dotActive {
+  background: var(--color-accent);
+  border-color: rgba(106, 169, 255, 0.6);
+  box-shadow: 0 0 8px rgba(106, 169, 255, 0.7);
+}
+
+.hint {
+  margin: 4px 0 0;
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.04em;
+}

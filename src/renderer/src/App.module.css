@@ -1,0 +1,153 @@
+.shell {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 48px;
+  color: var(--color-text-primary);
+  overflow: hidden;
+}
+
+.grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 80px 80px;
+  background-position: -1px -1px;
+  mask-image: radial-gradient(ellipse at center, black 35%, transparent 90%);
+  z-index: 1;
+}
+
+.brand {
+  position: fixed;
+  top: 32px;
+  left: 48px;
+  right: 48px;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  -webkit-app-region: drag;
+  pointer-events: auto;
+}
+
+.brand > * {
+  -webkit-app-region: no-drag;
+}
+
+.mark {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 6px 20px rgba(0, 0, 0, 0.4);
+  display: grid;
+  place-items: center;
+}
+
+.markCore {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ffffff, #6aa9ff 70%, #3b7bff);
+  box-shadow: 0 0 14px rgba(106, 169, 255, 0.8);
+}
+
+.titleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-right: auto;
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--color-text-primary);
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary);
+}
+
+.systemStatus {
+  display: flex;
+  gap: 8px;
+}
+
+.intro {
+  position: relative;
+  /* Welcome panel sits BELOW windows so opening an app brings it forward.
+     Without this, the first window (zIndex=2) ties the welcome panel's
+     z-index=2 and the panel wins (later in DOM), blocking drag/close. */
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.introSpacer {
+  display: none;
+}
+
+.welcomePanel {
+  max-width: 520px;
+}
+
+.welcomeBody {
+  margin: 0 0 16px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+}
+
+.tipsList {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+}
+
+.tipsList li::marker {
+  color: var(--color-accent);
+}
+
+.footer {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.chip {
+  display: inline-flex;
+}
+
+.footerText {
+  margin-left: auto;
+  letter-spacing: 0.06em;
+}

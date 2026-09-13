@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AirVision Cursor</title>
+<style>
+  /* ── Tokens (mirror of tokens.css vars, hardcoded for the overlay) ── */
+  :root {
+    --duration-fast: 120ms;
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* ── Cursor container ── */
+  #cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 28px;
+    height: 28px;
+    pointer-events: none;
+    z-index: 10000;
+    opacity: 0;
+    transition:
+      opacity var(--duration-fast) var(--ease-out-soft),
+      transform var(--duration-fast) var(--ease-out-soft);
+    will-change: transform, opacity;
+  }
+
+  #cursor.visible {
+    opacity: 0.95;
+  }
+
+  /* ── Base ring ── */
+  .ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(106, 169, 255, 0.6);
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(106, 169, 255, 0.18),
+      rgba(106, 169, 255, 0) 70%
+    );
+    box-shadow: 0 0 16px rgba(106, 169, 255, 0.4);
+    transition:
+      transform var(--duration-fast) var(--ease-out-soft),
+      border-color var(--duration-fast) var(--ease-out-soft),
+      box-shadow var(--duration-fast) var(--ease-out-soft);
+  }
+
+  /* ── Inner ring: dwell / click progress ── */
+  .inner-ring {
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    pointer-events: none;
+    transform-origin: center;
+  }
+
+  /* ── Outer ring: hold-drag countdown ── */
+  .outer-ring {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    pointer-events: none;
+    transform-origin: center;
+  }
+
+  .inner-circle,
+  .outer-circle {
+    transition: stroke-dashoffset 0.08s cubic-bezier(0.2, 0, 0, 1), stroke 0.15s ease-out;
+    filter: drop-shadow(0 0 4px rgba(106, 169, 255, 0.8));
+  }
+
+  /* ── Core dot ── */
+  .core {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+    transition: transform var(--duration-fast) var(--ease-out-soft),
+                background var(--duration-fast) var(--ease-out-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── Hover state ── */
+  #cursor.hover .ring {
+    border-color: rgba(180, 220, 255, 0.95);
+    transform: scale(1.18);
+    box-shadow: 0 0 24px rgba(106, 169, 255, 0.65);
+  }
+  #cursor.hover .core {
+    transform: scale(1.2);
+  }
+
+  /* ── Active / gesturing state ── */
+  #cursor.active .ring {
+    border-color: rgba(106, 169, 255, 0.35);
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(106, 169, 255, 0.05),
+      rgba(106, 169, 255, 0) 70%
+    );
+    box-shadow: 0 0 10px rgba(106, 169, 255, 0.25);
+    transform: scale(1.05);
+  }
+  #cursor.active .core {
+    transform: scale(0.9);
+    background: rgba(255, 255, 255, 0.85);
+  }
+
+  /* ── Dwell / dwelling state ── */
+  #cursor.dwelling .ring {
+    border-color: rgba(255, 182, 106, 0.85);
+    box-shadow: 0 0 16px rgba(255, 182, 106, 0.55);
+  }
+
+  /* ── Hold-armed (grab) state ── */
+  #cursor.holdArmed .core,
+  #cursor.grab .core {
+    width: 18px;
+    height: 18px;
+    margin: -9px 0 0 -9px;
+    background: rgba(106, 255, 169, 0.95);
+    box-shadow: 0 0 14px rgba(106, 255, 169, 0.85);
+    border-radius: 50%;
+    animation: grabPulse 0.8s ease-in-out infinite alternate;
+  }
+  #cursor.holdArmed .ring,
+  #cursor.grab .ring {
+    border-color: rgba(106, 255, 169, 0.95);
+    transform: scale(1.25);
+    box-shadow: 0 0 28px rgba(106, 255, 169, 0.75);
+    animation: pulse 0.6s ease-in-out infinite alternate;
+  }
+
+  /* ── Zoom active ── */
+  #cursor.zoomActive .ring {
+    border-color: rgba(255, 107, 241, 0.9);
+    transform: scale(1.3);
+    box-shadow: 0 0 28px rgba(255, 107, 241, 0.7);
+    animation: zoomPulse 0.5s ease-in-out infinite alternate;
+  }
+  #cursor.zoomActive .core {
+    width: 12px;
+    height: 12px;
+    margin: -6px 0 0 -6px;
+    background: rgba(255, 107, 241, 0.95);
+    box-shadow: 0 0 12px rgba(255, 107, 241, 0.9);
+    animation: none;
+  }
+
+  /* ── Zoom in / out direction ── */
+  #cursor.zoomIn .ring {
+    border-color: rgba(106, 255, 169, 0.95);
+    box-shadow: 0 0 32px rgba(106, 255, 169, 0.8);
+  }
+  #cursor.zoomOut .ring {
+    border-color: rgba(255, 107, 241, 0.95);
+    box-shadow: 0 0 32px rgba(255, 107, 241, 0.8);
+  }
+
+  @keyframes zoomPulse {
+    from { transform: scale(1.25); box-shadow: 0 0 24px rgba(255, 107, 241, 0.6); }
+    to   { transform: scale(1.35); box-shadow: 0 0 36px rgba(255, 107, 241, 0.85); }
+  }
+  @keyframes pulse {
+    from { transform: scale(1.2); }
+    to   { transform: scale(1.3); }
+  }
+  @keyframes grabPulse {
+    from { transform: scale(0.95); box-shadow: 0 0 10px rgba(106, 255, 169, 0.7); }
+    to   { transform: scale(1.05); box-shadow: 0 0 18px rgba(106, 255, 169, 1); }
+  }
+</style>
+</head>
+<body>
+<div id="cursor">
+  <!-- Base ring -->
+  <div class="ring"></div>
+
+  <!-- Inner dwell ring -->
+  <svg class="inner-ring" width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+    <circle
+      id="innerCircle"
+      cx="16" cy="16" r="12"
+      fill="none"
+      stroke="rgba(255, 182, 106, 0.95)"
+      stroke-width="1.5"
+      stroke-dasharray="75.40"
+      stroke-dashoffset="75.40"
+      stroke-linecap="round"
+      transform="rotate(-90 16 16)"
+    />
+  </svg>
+
+  <!-- Outer hold ring -->
+  <svg class="outer-ring" width="48" height="48" viewBox="0 0 48 48" aria-hidden="true">
+    <circle
+      id="outerCircle"
+      cx="24" cy="24" r="18"
+      fill="none"
+      stroke="rgba(255, 182, 106, 0.85)"
+      stroke-width="1.5"
+      stroke-dasharray="113.10"
+      stroke-dashoffset="113.10"
+      stroke-linecap="round"
+      transform="rotate(-90 24 24)"
+    />
+  </svg>
+
+  <!-- Core dot -->
+  <div class="core" id="core"></div>
+</div>
+
+<script>
+// ── Constants (must match SpatialCursor.tsx) ──
+const INNER_RADIUS = 12;
+const OUTER_RADIUS = 18;
+const INNER_CIRCUM = 2 * Math.PI * INNER_RADIUS; // 75.40
+const OUTER_CIRCUM = 2 * Math.PI * OUTER_RADIUS;  // 113.10
+
+// ── DOM refs ──
+const cursorEl  = document.getElementById('cursor');
+const innerCirc = document.getElementById('innerCircle');
+const outerCirc = document.getElementById('outerCircle');
+const coreEl    = document.getElementById('core');
+
+// ── State received via IPC ──
+let state = {
+  visible: false,
+  x: 0,
+  y: 0,
+  showDwell: false,
+  showHold: false,
+  holdArmed: false,
+  dwellColor: 'rgba(255, 182, 106, 0.95)',
+  holdColor: 'rgba(255, 182, 106, 0.85)',
+  zoomPhase: 'IDLE',
+  zoomDirection: null,
+  dwellProgress: 0,
+  holdProgress: 0,
+};
+
+// ── Apply state to DOM ──
+function applyState(s) {
+  if (!cursorEl) return;
+
+  // 1. Position + visibility
+  const screenX = Math.round(s.x);
+  const screenY = Math.round(s.y);
+  cursorEl.style.transform = `translate(${screenX}px, ${screenY}px) translate(-50%, -50%)`;
+  cursorEl.classList.toggle('visible', s.visible);
+
+  // 2. State classes (order matters: more specific later wins)
+  const allStates = ['hover', 'active', 'dwell', 'hold', 'holdArmed', 'grab',
+                     'zoomActive', 'zoomIn', 'zoomOut'];
+  allStates.forEach(cls => cursorEl.classList.remove(cls));
+
+  if (s.zoomPhase === 'ARMED' || s.zoomPhase === 'TRACKING') {
+    cursorEl.classList.add('zoomActive');
+    if (s.zoomDirection === 'in') cursorEl.classList.add('zoomIn');
+    else if (s.zoomDirection === 'out') cursorEl.classList.add('zoomOut');
+  }
+  if (s.holdArmed) cursorEl.classList.add('holdArmed');
+  if (s.showHold)  cursorEl.classList.add('active');
+  if (s.showDwell) cursorEl.classList.add('dwell');
+  if (s.visible && !s.showDwell && !s.showHold && !s.holdArmed) {
+    cursorEl.classList.add('hover');
+  }
+
+  // 3. Ring progress via stroke-dashoffset (direct DOM, no React)
+  if (innerCirc) {
+    innerCirc.style.strokeDashoffset = `${INNER_CIRCUM * (1 - (s.dwellProgress || 0))}`;
+    innerCirc.setAttribute('stroke', s.dwellColor || 'rgba(255, 182, 106, 0.95)');
+  }
+  if (outerCirc) {
+    outerCirc.style.strokeDashoffset = `${OUTER_CIRCUM * (1 - (s.holdProgress || 0))}`;
+    outerCirc.setAttribute('stroke', s.holdColor || 'rgba(255, 182, 106, 0.85)');
+  }
+
+  // 4. Show/hide rings
+  if (innerCirc) innerCirc.style.display = s.showDwell ? 'block' : 'none';
+  if (outerCirc) outerCirc.style.display = s.showHold ? 'block' : 'none';
+}
+
+// ── Listen for IPC from main process ──
+// The main process sends cursor:update to this overlay's webContents.
+window.electronAPI?.onCursorUpdate((newState) => {
+  state = { ...state, ...newState };
+  console.log('[overlay] state update', state.visible, 'x=', state.x, 'y=', state.y);
+  applyState(state);
+});
+</script>
+</body>
+</html>

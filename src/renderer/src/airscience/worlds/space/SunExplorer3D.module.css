@@ -1,0 +1,890 @@
+/* SunExplorer3D.module.css - Solar simulation styling
+ * Uses CSS variables so the same theme can be themed per-planet when reused.
+ */
+
+.explorer {
+  /* default = Sun (golden/orange) */
+  --planet-primary: #ff8c00;
+  --planet-primary-rgb: 255, 140, 0;
+  --planet-secondary: #ffb347;
+  --planet-accent: #ffd580;
+  --planet-glow: rgba(255, 140, 0, 0.5);
+  --planet-soft: rgba(255, 140, 0, 0.18);
+  --planet-name: 'MẶT TRỜI';
+  --planet-glyph: '☀️';
+
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: #f0e6d3;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: transparent;
+}
+
+/* Loading overlay */
+.loadingOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 26, 0.95);
+  z-index: 100;
+}
+
+.loadingBox {
+  text-align: center;
+  padding: 40px 60px;
+  background: linear-gradient(145deg, rgba(40, 30, 10, 0.9), rgba(20, 15, 5, 0.95));
+  border-radius: 20px;
+  border: 2px solid var(--planet-soft);
+  box-shadow: 0 0 60px var(--planet-glow);
+}
+
+.spinner {
+  font-size: 60px;
+  animation: pulse 1.5s ease-in-out infinite;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 20px var(--planet-glow));
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.loadingTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--planet-accent);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.loadingSub {
+  font-size: 13px;
+  color: #a89070;
+  margin-bottom: 20px;
+}
+
+.loadingBar {
+  width: 300px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.loadingFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--planet-primary), var(--planet-secondary), var(--planet-primary));
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+  transition: width 0.3s ease;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Instruction overlay (planet-themed, matches Earth/Space) ── */
+.instructionOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(10, 5, 0, 0.65) 0%,
+    rgba(0, 0, 0, 0.88) 100%
+  );
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 100;
+  animation: fadeIn 0.45s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.instructionBox {
+  position: relative;
+  max-width: 540px;
+  width: 92%;
+  padding: 32px;
+  background: linear-gradient(160deg, rgba(20, 12, 0, 0.96), rgba(10, 5, 0, 0.98));
+  border: 1px solid var(--planet-primary);
+  border-radius: 24px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.7),
+    0 0 60px var(--planet-glow),
+    inset 0 1px 0 rgba(var(--planet-primary-rgb), 0.25);
+  overflow: hidden;
+  color: #f0e6d3;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+.instructionBox::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 20% 0%,
+    var(--planet-soft) 0%,
+    transparent 50%
+  );
+  pointer-events: none;
+}
+.instructionGlyph {
+  position: absolute;
+  top: -32px;
+  right: -16px;
+  font-size: 180px;
+  opacity: 0.08;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 0 24px var(--planet-glow));
+}
+
+.instrHeader {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 6px;
+  position: relative;
+}
+.instrIcon {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--planet-primary), var(--planet-secondary));
+  font-size: 26px;
+  box-shadow: 0 6px 20px var(--planet-glow), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.instrTitleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.instrEyebrow {
+  font-family: 'Fira Code', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--planet-accent);
+  text-transform: uppercase;
+  margin: 0;
+}
+.instrTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+}
+.instrSubtitle {
+  font-size: 14px;
+  color: rgba(255, 220, 180, 0.75);
+  letter-spacing: 0.04em;
+  margin: 0 0 22px;
+  padding-left: 66px;
+}
+
+.instrList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 22px;
+  position: relative;
+}
+
+.instrStep {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(var(--planet-primary-rgb), 0.06);
+  border: 1px solid rgba(var(--planet-primary-rgb), 0.18);
+  font-size: 14px;
+  color: rgba(240, 230, 210, 0.92);
+  line-height: 1.4;
+  transition: all 0.2s ease;
+}
+.instrStep:hover {
+  background: rgba(var(--planet-primary-rgb), 0.12);
+  border-color: rgba(var(--planet-primary-rgb), 0.4);
+}
+.instrStep b {
+  color: var(--planet-accent);
+}
+
+.instrNum {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--planet-primary), var(--planet-secondary));
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 12px;
+  color: #1a0a00;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px var(--planet-glow);
+}
+
+.instrTip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid var(--planet-primary);
+  border-radius: 8px;
+  margin-bottom: 22px;
+  font-size: 12px;
+  color: rgba(240, 230, 210, 0.8);
+  line-height: 1.5;
+}
+.instrTip b {
+  color: var(--planet-accent);
+}
+
+.startBtn {
+  width: 100%;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, var(--planet-primary), var(--planet-secondary));
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a0a00;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-family: inherit;
+  box-shadow: 0 4px 20px var(--planet-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.startBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 28px var(--planet-glow);
+}
+
+/* Canvas */
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Header */
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: linear-gradient(180deg, rgba(20, 10, 5, 0.88) 0%, transparent 100%);
+  z-index: 10;
+  gap: 12px;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.headerTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--planet-accent);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.headerDot {
+  width: 1px;
+  height: 20px;
+  background: rgba(148, 163, 184, 0.3);
+  flex-shrink: 0;
+}
+
+.integrityPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  font-family: 'Fira Code', monospace;
+  font-size: 10px;
+  color: #4ade80;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.integrityDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 6px #22c55e;
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.headerBadge {
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #f0e6d3;
+}
+
+.headerSrc {
+  font-size: 10px;
+  font-family: 'Fira Code', monospace;
+  color: rgba(168, 144, 112, 0.85);
+}
+.headerSrc::before {
+  content: 'SRC: ';
+  color: #64748b;
+}
+
+/* Main layout — narrower panels so 3D body stays visible in middle */
+.main {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  right: 0;
+  bottom: 60px;
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  pointer-events: none;
+  gap: 12px;
+}
+
+.main > * {
+  pointer-events: auto;
+}
+
+.leftPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 240px;
+}
+
+.rightPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 280px;
+}
+
+/* Panels */
+.panel {
+  background: linear-gradient(145deg, rgba(40, 25, 10, 0.88), rgba(20, 15, 5, 0.94));
+  border-radius: 16px;
+  border: 1px solid rgba(var(--planet-primary-rgb), 0.2);
+  padding: 16px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.panelTitle {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--planet-accent);
+  margin-bottom: 12px;
+}
+
+.panelTitleOrange {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #fb923c;
+  margin-bottom: 8px;
+}
+
+/* Layer toggles */
+.layerList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.layerItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: rgba(var(--planet-primary-rgb), 0.08);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.layerItem:hover {
+  background: rgba(var(--planet-primary-rgb), 0.16);
+}
+
+.toggle {
+  width: 36px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  position: relative;
+  transition: background 0.3s ease;
+}
+
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: #666;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.toggleOn {
+  background: linear-gradient(135deg, var(--planet-primary), var(--planet-secondary));
+}
+
+.toggleOn::after {
+  left: 18px;
+  background: #fff;
+}
+
+.layerName {
+  font-size: 13px;
+  color: #d0c0a0;
+}
+
+/* Slider */
+.slider {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  outline: none;
+  -webkit-appearance: none;
+  margin-bottom: 8px;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, var(--planet-primary), var(--planet-secondary));
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px var(--planet-glow);
+}
+
+.sliderValue {
+  font-size: 12px;
+  color: #a89070;
+  text-align: center;
+}
+
+/* Activity buttons */
+.activityButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.activityBtn {
+  flex: 1;
+  padding: 8px 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 11px;
+  color: #a89070;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.activityBtn:hover {
+  background: rgba(var(--planet-primary-rgb), 0.12);
+}
+
+.activityBtn.active {
+  background: linear-gradient(135deg, var(--planet-soft), rgba(var(--planet-primary-rgb), 0.1));
+  border-color: var(--planet-primary);
+  color: var(--planet-accent);
+}
+
+/* Data panel */
+.dataPanel {
+  flex: 1;
+  overflow: hidden;
+}
+
+.dataScroll {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.dataScroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.dataScroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+}
+
+.dataScroll::-webkit-scrollbar-thumb {
+  background: var(--planet-soft);
+  border-radius: 2px;
+}
+
+.dataHeader {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--planet-accent);
+  letter-spacing: 1px;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--planet-soft);
+}
+
+.dataGroup {
+  margin-bottom: 12px;
+}
+
+.dataCat {
+  font-size: 10px;
+  font-weight: 600;
+  color: #a89070;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.dataRow {
+  display: flex;
+  align-items: baseline;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.dataLbl {
+  color: #b0a090;
+  white-space: nowrap;
+}
+
+.dataDots {
+  flex: 1;
+  border-bottom: 1px dotted rgba(var(--planet-primary-rgb), 0.3);
+  margin: 0 8px;
+  min-width: 20px;
+}
+
+.dataVal {
+  color: #f0e6d3;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dataUnit {
+  color: #8a7a60;
+  font-size: 10px;
+  font-weight: 400;
+}
+
+/* Provenance panel */
+.provPanel {
+  background: linear-gradient(145deg, rgba(50, 30, 10, 0.9), rgba(25, 15, 5, 0.95));
+}
+
+.provSub {
+  font-size: 11px;
+  color: #8a7a60;
+  margin-bottom: 12px;
+}
+
+.provContent {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.codeBox {
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 11px;
+  color: #a89070;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(var(--planet-primary-rgb), 0.1);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fieldLabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: #8a7a60;
+  letter-spacing: 0.5px;
+}
+
+.fieldVal {
+  font-size: 13px;
+  color: #f0e6d3;
+}
+
+.fieldSub {
+  font-size: 11px;
+  color: #a89070;
+}
+
+.pipeline {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.pipelineTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: #a89070;
+  margin-bottom: 6px;
+}
+
+.pipelineStep {
+  font-size: 11px;
+  color: #b0a090;
+  margin-bottom: 3px;
+}
+
+.stepIdx {
+  color: var(--planet-primary);
+  font-weight: 600;
+}
+
+.valid {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: rgba(0, 255, 100, 0.05);
+  border-radius: 6px;
+  border: 1px solid rgba(0, 255, 100, 0.2);
+}
+
+.validDot {
+  width: 8px;
+  height: 8px;
+  background: #00ff64;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #00ff64;
+}
+
+.validTxt {
+  font-size: 11px;
+  font-weight: 600;
+  color: #00ff64;
+  letter-spacing: 0.5px;
+}
+
+/* Fact list */
+.factList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fact {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12px;
+  color: #b0a090;
+  line-height: 1.4;
+}
+
+.factIcon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* Footer */
+.footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: linear-gradient(0deg, rgba(20, 10, 5, 0.88) 0%, transparent 100%);
+  z-index: 10;
+  gap: 16px;
+}
+
+.footerLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.timeLbl {
+  font-size: 10px;
+  color: #8a7a60;
+  letter-spacing: 0.5px;
+}
+
+.timeVal {
+  font-size: 13px;
+  color: #f0e6d3;
+  font-family: 'Consolas', monospace;
+}
+
+.footerCenter {
+  text-align: center;
+}
+
+.footerLabel {
+  font-size: 12px;
+  color: #a89070;
+}
+
+.footerRight {
+  display: flex;
+  align-items: center;
+}
+
+.footerStatus {
+  font-size: 12px;
+  color: #f0e6d3;
+  padding: 6px 12px;
+  background: var(--planet-soft);
+  border-radius: 20px;
+}
+
+/* ── AZIMUTH slider + sunLabel (used by PlanetExplorer3D footer/panel) ── */
+.sunLbl {
+  font-family: 'Fira Code', monospace;
+  font-size: 10px;
+  color: #8a7a60;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.sunSlider {
+  width: 100%;
+  height: 4px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.sunSlider::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--planet-primary);
+  box-shadow: 0 0 8px var(--planet-glow);
+  cursor: pointer;
+}
+.sunSlider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--planet-primary);
+  box-shadow: 0 0 8px var(--planet-glow);
+  cursor: pointer;
+  border: none;
+}
+
+/* ── AZIMUTH panel (left sidebar) ── */
+.azimuthRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.azimuthValue {
+  font-family: 'Fira Code', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--planet-accent);
+  letter-spacing: 0.04em;
+}
+.azimuthHint {
+  font-size: 11px;
+  color: #8a7a60;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .leftPanel, .rightPanel {
+    width: 220px;
+  }
+}
+
+@media (max-width: 900px) {
+  .main {
+    flex-direction: column;
+  }
+
+  .leftPanel, .rightPanel {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .panel {
+    min-width: 250px;
+  }
+}

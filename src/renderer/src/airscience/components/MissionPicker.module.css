@@ -1,0 +1,35 @@
+.picker {
+  display: inline-flex;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(12px);
+  max-width: 540px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: transparent;
+  border: none;
+  color: rgba(220, 230, 250, 0.7);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out-soft);
+  white-space: nowrap;
+}
+
+.chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-primary);
+}
+
+.chip.active {
+  background: rgba(106, 169, 255, 0.22);
+  color: var(--color-text-primary);
+  border: 1px solid rgba(106, 169, 255, 0.45);
+}

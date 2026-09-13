@@ -1,0 +1,199 @@
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 28px;
+  pointer-events: none;
+  z-index: var(--z-cursor);
+  opacity: 0;
+  transition:
+    opacity var(--duration-fast) var(--ease-out-soft),
+    transform var(--duration-fast) var(--ease-out-soft);
+  will-change: transform, opacity;
+  mix-blend-mode: screen;
+}
+
+.cursor.visible {
+  opacity: 0.95;
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(106, 169, 255, 0.6);
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(106, 169, 255, 0.18),
+    rgba(106, 169, 255, 0) 70%
+  );
+  box-shadow: 0 0 16px rgba(106, 169, 255, 0.4);
+  transition:
+    transform var(--duration-fast) var(--ease-out-soft),
+    border-color var(--duration-fast) var(--ease-out-soft),
+    box-shadow var(--duration-fast) var(--ease-out-soft);
+}
+
+/* Inner ring: click progress (only visible while pinching). */
+.innerRing {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  pointer-events: none;
+  transform-origin: center;
+}
+
+/* Outer ring: hold-drag countdown (only visible while pinching but not yet armed). */
+.outerRing {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  pointer-events: none;
+  transform-origin: center;
+}
+
+.innerCircle {
+  transition: stroke-dashoffset 0.08s cubic-bezier(0.2, 0, 0, 1), stroke 0.15s ease-out;
+  filter: drop-shadow(0 0 4px rgba(106, 169, 255, 0.8));
+}
+
+.outerCircle {
+  transition: stroke-dashoffset 0.08s cubic-bezier(0.2, 0, 0, 1), stroke 0.15s ease-out;
+  filter: drop-shadow(0 0 4px rgba(255, 182, 106, 0.7));
+}
+
+.core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+  transition: transform var(--duration-fast) var(--ease-out-soft), background var(--duration-fast) var(--ease-out-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.hover .ring {
+  border-color: rgba(180, 220, 255, 0.95);
+  transform: scale(1.18);
+  box-shadow: 0 0 24px rgba(106, 169, 255, 0.65);
+}
+
+.hover .core {
+  transform: scale(1.2);
+}
+
+/* While actively gesturing (pinching or dwelling), dim the outer ring base
+   and emphasize progress rings. */
+.active .ring {
+  border-color: rgba(106, 169, 255, 0.35);
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(106, 169, 255, 0.05),
+    rgba(106, 169, 255, 0) 70%
+  );
+  box-shadow: 0 0 10px rgba(106, 169, 255, 0.25);
+  transform: scale(1.05);
+}
+
+.active .core {
+  transform: scale(0.9);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* While dwelling (counting up to a click), warm tint the cursor. */
+.cursor.dwelling .ring {
+  border-color: rgba(255, 182, 106, 0.85);
+  box-shadow: 0 0 16px rgba(255, 182, 106, 0.55);
+}
+
+/* When hold-drag is armed, the core swaps to a grab icon (✋ SVG). */
+.cursor.holdArmed .core {
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  background: rgba(106, 255, 169, 0.95);
+  box-shadow: 0 0 14px rgba(106, 255, 169, 0.85);
+  animation: grabPulse 0.8s ease-in-out infinite alternate;
+}
+
+.cursor.holdArmed .ring {
+  border-color: rgba(106, 255, 169, 0.95);
+  transform: scale(1.25);
+  box-shadow: 0 0 28px rgba(106, 255, 169, 0.75);
+  animation: pulse 0.6s ease-in-out infinite alternate;
+}
+
+.core.grab {
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  background: rgba(106, 255, 169, 0.95);
+  box-shadow: 0 0 14px rgba(106, 255, 169, 0.85);
+}
+
+/* Zoom state: when 5 fingers are detected and zoom is active */
+.cursor.zoomActive .ring {
+  border-color: rgba(255, 107, 241, 0.9);
+  transform: scale(1.3);
+  box-shadow: 0 0 28px rgba(255, 107, 241, 0.7);
+  animation: zoomPulse 0.5s ease-in-out infinite alternate;
+}
+
+.cursor.zoomActive .core {
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  background: rgba(255, 107, 241, 0.95);
+  box-shadow: 0 0 12px rgba(255, 107, 241, 0.9);
+}
+
+/* Zoom in direction: fingers spreading */
+.cursor.zoomIn .ring {
+  border-color: rgba(106, 255, 169, 0.95);
+  box-shadow: 0 0 32px rgba(106, 255, 169, 0.8);
+}
+
+/* Zoom out direction: fingers closing */
+.cursor.zoomOut .ring {
+  border-color: rgba(255, 107, 241, 0.95);
+  box-shadow: 0 0 32px rgba(255, 107, 241, 0.8);
+}
+
+@keyframes zoomPulse {
+  from {
+    transform: scale(1.25);
+    box-shadow: 0 0 24px rgba(255, 107, 241, 0.6);
+  }
+  to {
+    transform: scale(1.35);
+    box-shadow: 0 0 36px rgba(255, 107, 241, 0.85);
+  }
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(1.2);
+  }
+  to {
+    transform: scale(1.3);
+  }
+}
+
+@keyframes grabPulse {
+  from {
+    transform: scale(0.95);
+    box-shadow: 0 0 10px rgba(106, 255, 169, 0.7);
+  }
+  to {
+    transform: scale(1.05);
+    box-shadow: 0 0 18px rgba(106, 255, 169, 1);
+  }
+}

@@ -1,0 +1,93 @@
+.keyboard {
+  position: fixed;
+  left: 16px;
+  right: 96px;  /* leave space for SideToolbar */
+  bottom: 16px;
+  padding: 12px 16px 14px;
+  border-radius: 18px;
+  background: linear-gradient(160deg, rgba(18, 22, 32, 0.92), rgba(18, 22, 32, 0.78));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 20px 50px rgba(0, 0, 0, 0.5);
+  z-index: 9100;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.targetInfo {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.55);
+  text-align: center;
+  margin-bottom: 2px;
+}
+
+.targetInfo strong {
+  color: rgba(207, 226, 255, 0.95);
+  font-weight: 600;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.key {
+  flex: 1 1 auto;
+  min-width: 30px;
+  height: 42px;
+  padding: 0 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 14px;
+  font-family: system-ui, -apple-system, sans-serif;
+  cursor: pointer;
+  transition: background 0.1s ease, transform 0.05s ease;
+}
+
+.key:hover {
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.key:active {
+  background: rgba(106, 169, 255, 0.32);
+  transform: scale(0.97);
+}
+
+.keyActive {
+  background: rgba(106, 169, 255, 0.32) !important;
+  border-color: rgba(106, 169, 255, 0.6);
+  color: #cfe2ff;
+}
+
+.keyPrimary {
+  background: rgba(106, 169, 255, 0.22);
+  border-color: rgba(106, 169, 255, 0.45);
+  color: #cfe2ff;
+}
+
+.keyPrimary:hover {
+  background: rgba(106, 169, 255, 0.32);
+}
+
+.wide {
+  flex: 1.4 1 auto;
+  min-width: 60px;
+}
+
+.extraWide {
+  flex: 5 1 auto;
+  min-width: 200px;
+}

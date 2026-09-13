@@ -1,0 +1,56 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  background: rgba(10, 16, 30, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  color: var(--color-text-secondary);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.2);
+}
+
+.live {
+  color: var(--color-text-primary);
+  border-color: rgba(108, 210, 142, 0.3);
+}
+
+.live .dot {
+  background: var(--color-success);
+  box-shadow: 0 0 10px rgba(108, 210, 142, 0.7);
+}
+
+.ready {
+  color: var(--color-text-primary);
+  border-color: rgba(106, 169, 255, 0.3);
+}
+
+.ready .dot {
+  background: var(--color-accent);
+  box-shadow: 0 0 10px rgba(106, 169, 255, 0.6);
+}
+
+.error {
+  color: #ffd0d0;
+  border-color: rgba(240, 128, 128, 0.35);
+}
+
+.error .dot {
+  background: var(--color-danger);
+  box-shadow: 0 0 10px rgba(240, 128, 128, 0.7);
+}
+
+.idle .dot {
+  background: rgba(255, 255, 255, 0.25);
+}

@@ -1,0 +1,121 @@
+.card {
+  position: fixed;
+  left: 50%;
+  bottom: 32px;
+  transform: translateX(-50%);
+  max-width: 560px;
+  width: calc(100% - 64px);
+  background: linear-gradient(160deg, rgba(20, 30, 60, 0.85), rgba(10, 16, 36, 0.92));
+  border: 1px solid rgba(150, 200, 255, 0.35);
+  border-radius: 22px;
+  padding: 22px 26px 24px;
+  color: #f5f8ff;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  z-index: 100;
+  backdrop-filter: blur(18px);
+  pointer-events: auto;
+  animation: rise 320ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+@keyframes rise {
+  from { transform: translate(-50%, 30px); opacity: 0; }
+  to   { transform: translate(-50%, 0); opacity: 1; }
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+
+.title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.titleEn {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  color: rgba(180, 210, 255, 0.75);
+  text-transform: uppercase;
+}
+
+.body {
+  margin: 6px 0 12px;
+  font-size: 16px;
+  line-height: 1.55;
+  color: rgba(245, 248, 255, 0.96);
+}
+
+.extended {
+  margin: 0 0 16px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(210, 220, 240, 0.85);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: rgba(180, 200, 230, 0.7);
+  text-transform: uppercase;
+}
+
+.source {
+  color: rgba(180, 210, 255, 0.9);
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(180, 210, 255, 0.6);
+}
+
+.draftBadge {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 200, 100, 0.18);
+  border: 1px solid rgba(255, 200, 100, 0.4);
+  color: rgba(255, 220, 150, 0.95);
+}
+
+.close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.close:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.reward {
+  position: absolute;
+  top: -22px;
+  right: 20px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: linear-gradient(160deg, rgba(255, 220, 120, 0.4), rgba(255, 180, 60, 0.25));
+  border: 1px solid rgba(255, 200, 100, 0.55);
+  color: #fff7d0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  animation: pop 360ms cubic-bezier(0.18, 0.89, 0.32, 1.18);
+}
+
+@keyframes pop {
+  from { transform: translateY(8px) scale(0.85); opacity: 0; }
+  to   { transform: translateY(0)   scale(1); opacity: 1; }
+}

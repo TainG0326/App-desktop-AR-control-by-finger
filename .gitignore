@@ -1,0 +1,42 @@
+# dependencies
+node_modules/
+
+# build output
+out/
+dist/
+release/
+*.tsbuildinfo
+
+# editor
+.vscode/
+.cursor/
+.idea/
+*.swp
+*.swo
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# env
+.env
+.env.local
+
+# cache
+.eslintcache
+.vitest-cache
+coverage/
+
+# temp scratch files
+all-tests.txt
+detective-tests.txt
+finaltest.txt
+gitstash.txt
+test.txt
+tscheck.txt
